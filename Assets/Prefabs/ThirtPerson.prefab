@@ -401,8 +401,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4228075176569340263}
-  m_LocalRotation: {x: 0.15440953, y: -0.000000017746723, z: 0.0000000027709401, w: 0.98800695}
-  m_LocalPosition: {x: 0, y: 3, z: -5}
+  m_LocalRotation: {x: 0.17911322, y: 0.09896921, z: -0.01811304, w: 0.97867024}
+  m_LocalPosition: {x: 3.2156563, y: 3.2216868, z: 6.5372934}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -990,11 +990,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 4228075177110921703}
-  speed: 6
-  turnSmoothTime: 0.1
+  speed: 3
+  turnSmoothTime: 0.2
   Cam: {fileID: 4228075176569340262}
   ownCamera: {fileID: 4228075176569340259}
   Cinemachine: {fileID: 4228075175751638775}
+  anim: {fileID: 4228075177259706427}
 --- !u!114 &1207586416264189705
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1103,6 +1104,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &3379729251202627701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3921590916499705593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Animator: {fileID: 4228075177259706427}
 --- !u!4 &4406660659227219011 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1f53843a364c37b4e8b0937c5f7849d5, type: 3}
