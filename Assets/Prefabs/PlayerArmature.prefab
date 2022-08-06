@@ -923,7 +923,7 @@ MonoBehaviour:
   cam: {fileID: 8514945153963149244}
   walkSpeed: 3.5
   runSpeedOffset: 2
-  rotationSpeed: 3.5
+  rotationSpeed: 1
   defaultInitialPositionOnPlane: {x: -4, y: 4}
   networkPositionDirection:
     m_InternalValue: {x: 0, y: 0, z: 0}
