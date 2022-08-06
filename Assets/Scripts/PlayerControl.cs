@@ -12,7 +12,7 @@ public class PlayerControl : NetworkBehaviour
         ReverseWalk,
         Run
     }
-
+    [SerializeField] private Camera cam;
 
     [SerializeField]
     private float walkSpeed = 3.5f;
@@ -56,6 +56,8 @@ public class PlayerControl : NetworkBehaviour
         {
             transform.position = new Vector3(Random.Range(defaultInitialPositionOnPlane.x, defaultInitialPositionOnPlane.y), 0,
                    Random.Range(defaultInitialPositionOnPlane.x, defaultInitialPositionOnPlane.y));
+
+            cam.enabled = true;
         }
     }
 

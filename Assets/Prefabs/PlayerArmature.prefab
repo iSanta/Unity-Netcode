@@ -920,6 +920,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19597fcf0b6065842b4057bdf1e396be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cam: {fileID: 8514945153963149244}
   walkSpeed: 3.5
   runSpeedOffset: 2
   rotationSpeed: 3.5
@@ -1290,7 +1291,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3841925135950779123}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
