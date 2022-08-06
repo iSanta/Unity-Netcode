@@ -151,7 +151,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4228075175463809104}
-  m_LocalRotation: {x: 0.15440953, y: -0.000000017000023, z: 0.0000000026568292, w: 0.98800695}
+  m_LocalRotation: {x: 0.15440953, y: -0.000000017738587, z: 0.000000002772255, w: 0.98800695}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -221,7 +221,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4228075175751638774
 Transform:
   m_ObjectHideFlags: 0
@@ -401,7 +401,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4228075176569340263}
-  m_LocalRotation: {x: 0.15440953, y: -0.000000017008515, z: 0.0000000026554603, w: 0.98800695}
+  m_LocalRotation: {x: 0.15440953, y: -0.000000017746723, z: 0.0000000027709401, w: 0.98800695}
   m_LocalPosition: {x: 0, y: 3, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -416,7 +416,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4228075176569340263}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
@@ -459,7 +459,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4228075176569340263}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!114 &4228075176569340257
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -518,7 +518,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4228075176644122576}
-  m_LocalRotation: {x: 0.13646023, y: -1e-45, z: -0, w: 0.9906456}
+  m_LocalRotation: {x: 0.13646023, y: -0, z: -0, w: 0.9906456}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -850,7 +850,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4228075177070731692}
-  m_LocalRotation: {x: 0.17235531, y: -0.000000016948883, z: 0.000000002965611, w: 0.9850349}
+  m_LocalRotation: {x: 0.17235531, y: 0.000000020211834, z: -0.0000000035365415, w: 0.9850349}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -916,6 +916,7 @@ GameObject:
   - component: {fileID: 4228075177110921701}
   - component: {fileID: 4228075177110921703}
   - component: {fileID: 4228075177110921702}
+  - component: {fileID: 1207586416264189705}
   m_Layer: 0
   m_Name: ThirtPerson
   m_TagString: Untagged
@@ -967,15 +968,15 @@ CharacterController:
   m_GameObject: {fileID: 4228075177110921722}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Height: 2
-  m_Radius: 0.5
+  m_Radius: 0.25
   m_SlopeLimit: 45
-  m_StepOffset: 0.3
+  m_StepOffset: 0
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &4228075177110921702
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -992,6 +993,34 @@ MonoBehaviour:
   speed: 6
   turnSmoothTime: 0.1
   Cam: {fileID: 4228075176569340262}
+  ownCamera: {fileID: 4228075176569340259}
+  Cinemachine: {fileID: 4228075175751638775}
+--- !u!114 &1207586416264189705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4228075177110921722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  InLocalSpace: 0
+  Interpolate: 1
 --- !u!1001 &4228075176858760104
 PrefabInstance:
   m_ObjectHideFlags: 0
