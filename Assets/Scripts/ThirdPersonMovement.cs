@@ -23,15 +23,18 @@ public class ThirdPersonMovement : NetworkBehaviour
     private void Start()
     {
         if (!IsOwner) { return; }
+        
 
         ownCamera.enabled = true;
         Cinemachine.SetActive(true);
-        controller.enabled = true;
+        
     }
 
     private void Update()
     {
         if (!IsOwner) { return; }
+
+        if (!IsLocalPlayer) { return; }
 
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
@@ -61,12 +64,15 @@ public class ThirdPersonMovement : NetworkBehaviour
     private void UpdatePosRotServerRpc(float rot, Vector3 pos)
     {
         UpdatePosRotClientRpc(rot, pos);
+        rotationNetwork.Value = Quaternion.Euler(0f, rot, 0f); ;
+        positionNetwork.Value = pos.normalized * speed * Time.deltaTime;
     }
 
     [ClientRpc]
     private void UpdatePosRotClientRpc(float rot, Vector3 pos)
     {
-        rotationNetwork.Value = Quaternion.Euler(0f, rot, 0f); ;
-        positionNetwork.Value = pos.normalized * speed * Time.deltaTime;
+        if (IsOwner) { return; }
+        transform.rotation = rotationNetwork.Value;
+        controller.Move(positionNetwork.Value);
     }
 }
