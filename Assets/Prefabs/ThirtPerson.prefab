@@ -996,7 +996,8 @@ MonoBehaviour:
   ownCamera: {fileID: 4228075176569340259}
   Cinemachine: {fileID: 4228075175751638775}
   anim: {fileID: 4228075177259706427}
-  gravity: 0.098
+  gravity: 9.8
+  jumpForce: 6
 --- !u!114 &1207586416264189705
 MonoBehaviour:
   m_ObjectHideFlags: 0

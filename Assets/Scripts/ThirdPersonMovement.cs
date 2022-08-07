@@ -14,7 +14,8 @@ public class ThirdPersonMovement : NetworkBehaviour
     [SerializeField] private GameObject Cinemachine;
     [SerializeField] private Animator anim;
     [SerializeField] private float gravity = 9.8f;
-
+    [SerializeField] private float jumpForce;
+ 
 
     private float fallingPos = 0;
     private float oldFallingPos = 0;
@@ -25,7 +26,10 @@ public class ThirdPersonMovement : NetworkBehaviour
     private int animState = 0;
     private int oldAnimState = 0;
 
+    private bool isJumping = false;
 
+    private float angle;
+    private Vector3 movedir;
 
     private NetworkVariable<Quaternion> rotationNetwork = new NetworkVariable<Quaternion>();
     private NetworkVariable<Vector3> positionNetwork = new NetworkVariable<Vector3>();
@@ -45,10 +49,10 @@ public class ThirdPersonMovement : NetworkBehaviour
 
     private void Update()
     {
-        controller.Move(new Vector3(0, fallingSpeed, 0));
 
         if (controller.isGrounded) {
             fallingSpeed = -gravity*Time.deltaTime;
+            if (isJumping) isJumping = false;
         }
         else
         {
@@ -59,6 +63,11 @@ public class ThirdPersonMovement : NetworkBehaviour
         if (!IsOwner) { return; }
 
         if (!IsLocalPlayer) { return; }
+
+        
+
+        //controller.Move(new Vector3(0, fallingSpeed, 0));
+
 
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
@@ -73,29 +82,27 @@ public class ThirdPersonMovement : NetworkBehaviour
         if (direction.magnitude >= 0.1f)
         {
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + Cam.eulerAngles.y;
-            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-
-            animState = 1;
-
-
-            Vector3 movedir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+            angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
+            if(isJumping == false) animState = 1;
 
 
+            movedir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
 
-            UpdatePosRotServerRpc(angle, movedir);
+
+
+            
 
 
             //transform.rotation = Quaternion.Euler(0f, angle, 0f);
             //controller.Move(movedir.normalized * speed * Time.deltaTime);
 
-            transform.rotation = rotationNetwork.Value;
-            controller.Move(positionNetwork.Value);
+            
 
 
         }
         else
         {
-            animState = 0;
+            if (isJumping == false) animState = 0;
         }
         if (animState != oldAnimState) {
 
@@ -104,6 +111,20 @@ public class ThirdPersonMovement : NetworkBehaviour
             anim.SetInteger("AnimState", animState);
             oldAnimState = animState;
         }
+
+        if (controller.isGrounded && Input.GetButtonDown("Jump"))
+        {
+            isJumping = true;
+            animState = 5;
+            fallingSpeed = jumpForce;
+        }
+
+        movedir.y = fallingSpeed;
+        UpdatePosRotServerRpc(angle, movedir);
+        
+            
+        transform.rotation = rotationNetwork.Value;
+        controller.Move(positionNetwork.Value);
     }
 
 
