@@ -63,8 +63,8 @@ public class ThirdPersonMovement : NetworkBehaviour
         if (!IsOwner) { return; }
 
         if (!IsLocalPlayer) { return; }
+        movedir = new Vector3();
 
-        
 
         //controller.Move(new Vector3(0, fallingSpeed, 0));
 
@@ -120,9 +120,13 @@ public class ThirdPersonMovement : NetworkBehaviour
         }
 
         movedir.y = fallingSpeed;
-        UpdatePosRotServerRpc(angle, movedir);
-        
-            
+        //if (!controller.isGrounded && direction.magnitude >= 0.1f)
+        //{
+            UpdatePosRotServerRpc(angle, movedir);
+
+        //}
+
+
         transform.rotation = rotationNetwork.Value;
         controller.Move(positionNetwork.Value);
     }
