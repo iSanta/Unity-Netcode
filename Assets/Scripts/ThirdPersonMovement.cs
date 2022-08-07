@@ -7,7 +7,9 @@ public class ThirdPersonMovement : NetworkBehaviour
 {
 
     [SerializeField] private CharacterController controller;
-    [SerializeField] private float speed = 6f;
+    private float speed = 6f;
+    [SerializeField] private float speedRuning;
+    [SerializeField] private float speedWalkin;
     [SerializeField] private float turnSmoothTime = 0.1f;
     [SerializeField] private Transform Cam;
     [SerializeField] private Camera ownCamera;
@@ -27,6 +29,7 @@ public class ThirdPersonMovement : NetworkBehaviour
     private int oldAnimState = 0;
 
     private bool isJumping = false;
+    private bool isRunning = false;
 
     private float angle;
     private Vector3 movedir;
@@ -40,10 +43,11 @@ public class ThirdPersonMovement : NetworkBehaviour
     {
         if (!IsOwner) { return; }
 
-
+        speedRuning = speed * 2;
         ownCamera.enabled = true;
         Cinemachine.SetActive(true);
         fallingPos = transform.position.y;
+        speed = speedWalkin;
 
     }
 
@@ -66,6 +70,26 @@ public class ThirdPersonMovement : NetworkBehaviour
         movedir = new Vector3();
 
 
+        if (Input.GetButtonDown("Run"))
+        {
+            
+            isRunning = true;
+        }
+        if (Input.GetButtonUp("Run"))
+        {
+            
+            isRunning = false;
+        }
+
+        if (isRunning && !isJumping) {
+            animState = 2;
+            speed = speedRuning;
+        }
+        else
+        {
+            speed = speedWalkin;
+        }
+
         //controller.Move(new Vector3(0, fallingSpeed, 0));
 
 
@@ -73,17 +97,15 @@ public class ThirdPersonMovement : NetworkBehaviour
         float vertical = Input.GetAxisRaw("Vertical");
         Vector3 direction = new Vector3(horizontal, 0f, vertical);
 
-        if (!controller.isGrounded)
-        {
-            Debug.Log(fallingSpeed);
-        }
+      
 
 
         if (direction.magnitude >= 0.1f)
         {
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + Cam.eulerAngles.y;
             angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-            if(isJumping == false) animState = 1;
+            if(isJumping == false && isRunning == false) animState = 1;
+           
 
 
             movedir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
@@ -118,6 +140,8 @@ public class ThirdPersonMovement : NetworkBehaviour
             animState = 5;
             fallingSpeed = jumpForce;
         }
+
+        
 
         movedir.y = fallingSpeed;
         //if (!controller.isGrounded && direction.magnitude >= 0.1f)

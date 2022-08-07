@@ -990,7 +990,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 4228075177110921703}
-  speed: 3
+  speedRuning: 6
+  speedWalkin: 3
   turnSmoothTime: 0.2
   Cam: {fileID: 4228075176569340262}
   ownCamera: {fileID: 4228075176569340259}
