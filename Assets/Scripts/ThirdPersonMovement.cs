@@ -13,7 +13,14 @@ public class ThirdPersonMovement : NetworkBehaviour
     [SerializeField] private Camera ownCamera;
     [SerializeField] private GameObject Cinemachine;
     [SerializeField] private Animator anim;
-  
+    [SerializeField] private float gravity = 9.8f;
+
+
+    private float fallingPos = 0;
+    private float oldFallingPos = 0;
+
+    private float fallingSpeed;
+
     private float turnSmoothVelocity;
     private int animState = 0;
     private int oldAnimState = 0;
@@ -23,19 +30,32 @@ public class ThirdPersonMovement : NetworkBehaviour
     private NetworkVariable<Quaternion> rotationNetwork = new NetworkVariable<Quaternion>();
     private NetworkVariable<Vector3> positionNetwork = new NetworkVariable<Vector3>();
     private NetworkVariable<int> animStateNetwork = new NetworkVariable<int>(0);
+    private NetworkVariable<float> gravityNetwork = new NetworkVariable<float>(0);
 
     private void Start()
     {
         if (!IsOwner) { return; }
-        
+
 
         ownCamera.enabled = true;
         Cinemachine.SetActive(true);
-        
+        fallingPos = transform.position.y;
+
     }
 
     private void Update()
     {
+        controller.Move(new Vector3(0, fallingSpeed, 0));
+
+        if (controller.isGrounded) {
+            fallingSpeed = -gravity*Time.deltaTime;
+        }
+        else
+        {
+            fallingSpeed -= gravity * Time.deltaTime;
+        }
+
+
         if (!IsOwner) { return; }
 
         if (!IsLocalPlayer) { return; }
@@ -43,6 +63,12 @@ public class ThirdPersonMovement : NetworkBehaviour
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
         Vector3 direction = new Vector3(horizontal, 0f, vertical);
+
+        if (!controller.isGrounded)
+        {
+            Debug.Log(fallingSpeed);
+        }
+
 
         if (direction.magnitude >= 0.1f)
         {
@@ -54,8 +80,10 @@ public class ThirdPersonMovement : NetworkBehaviour
 
             Vector3 movedir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
 
+
+
             UpdatePosRotServerRpc(angle, movedir);
-            
+
 
             //transform.rotation = Quaternion.Euler(0f, angle, 0f);
             //controller.Move(movedir.normalized * speed * Time.deltaTime);
@@ -63,7 +91,7 @@ public class ThirdPersonMovement : NetworkBehaviour
             transform.rotation = rotationNetwork.Value;
             controller.Move(positionNetwork.Value);
 
-            
+
         }
         else
         {
@@ -78,9 +106,12 @@ public class ThirdPersonMovement : NetworkBehaviour
         }
     }
 
+
+
     [ServerRpc]
     private void UpdatePosRotServerRpc(float rot, Vector3 pos)
     {
+
         UpdatePosRotClientRpc(rot, pos);
         rotationNetwork.Value = Quaternion.Euler(0f, rot, 0f); ;
         positionNetwork.Value = pos.normalized * speed * Time.deltaTime;
