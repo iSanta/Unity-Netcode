@@ -17,7 +17,7 @@ public class ThirdPersonMovement : NetworkBehaviour
     [SerializeField] private Animator anim;
     [SerializeField] private float gravity = 9.8f;
     [SerializeField] private float jumpForce;
- 
+
 
     private float fallingPos = 0;
     private float oldFallingPos = 0;
@@ -43,6 +43,8 @@ public class ThirdPersonMovement : NetworkBehaviour
     {
         if (!IsOwner) { return; }
 
+        transform.position = new Vector3(Random.Range(-2, 2), 0, Random.Range(-2, 2));
+
         speedRuning = speed * 2;
         ownCamera.enabled = true;
         Cinemachine.SetActive(true);
@@ -53,9 +55,26 @@ public class ThirdPersonMovement : NetworkBehaviour
 
     private void Update()
     {
+        if (IsClient && IsOwner)
+        {
+            ClientInputs();
+        }
 
-        if (controller.isGrounded) {
-            fallingSpeed = -gravity*Time.deltaTime;
+        //ClientMoveAndRotate();
+
+    }
+
+    private void ClientMoveAndRotate(){
+        transform.rotation = rotationNetwork.Value;
+        controller.Move(positionNetwork.Value);
+    }
+
+
+    private void ClientInputs()
+    {
+        if (controller.isGrounded)
+        {
+            fallingSpeed = -gravity * Time.deltaTime;
             if (isJumping) isJumping = false;
         }
         else
@@ -64,24 +83,23 @@ public class ThirdPersonMovement : NetworkBehaviour
         }
 
 
-        if (!IsOwner) { return; }
 
-        if (!IsLocalPlayer) { return; }
-        movedir = new Vector3();
+        
 
 
         if (Input.GetButtonDown("Run"))
         {
-            
+
             isRunning = true;
         }
         if (Input.GetButtonUp("Run"))
         {
-            
+
             isRunning = false;
         }
 
-        if (isRunning && !isJumping) {
+        if (isRunning && !isJumping)
+        {
             animState = 2;
             speed = speedRuning;
         }
@@ -90,43 +108,31 @@ public class ThirdPersonMovement : NetworkBehaviour
             speed = speedWalkin;
         }
 
-        //controller.Move(new Vector3(0, fallingSpeed, 0));
-
 
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
+
+
+        movedir = new Vector3();
         Vector3 direction = new Vector3(horizontal, 0f, vertical);
-
-      
-
 
         if (direction.magnitude >= 0.1f)
         {
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + Cam.eulerAngles.y;
             angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-            if(isJumping == false && isRunning == false) animState = 1;
-           
+            if (isJumping == false && isRunning == false) animState = 1;
+
 
 
             movedir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
-
-
-
-            
-
-
-            //transform.rotation = Quaternion.Euler(0f, angle, 0f);
-            //controller.Move(movedir.normalized * speed * Time.deltaTime);
-
-            
-
 
         }
         else
         {
             if (isJumping == false) animState = 0;
         }
-        if (animState != oldAnimState) {
+        if (animState != oldAnimState)
+        {
 
             UpdateAnimStateServerRpc(animState);
 
@@ -141,18 +147,11 @@ public class ThirdPersonMovement : NetworkBehaviour
             fallingSpeed = jumpForce;
         }
 
-        
+
 
         movedir.y = fallingSpeed;
-        //if (!controller.isGrounded && direction.magnitude >= 0.1f)
-        //{
-            UpdatePosRotServerRpc(angle, movedir);
 
-        //}
-
-
-        transform.rotation = rotationNetwork.Value;
-        controller.Move(positionNetwork.Value);
+        UpdatePosRotServerRpc(angle, movedir);
     }
 
 
@@ -161,15 +160,16 @@ public class ThirdPersonMovement : NetworkBehaviour
     private void UpdatePosRotServerRpc(float rot, Vector3 pos)
     {
 
-        UpdatePosRotClientRpc(rot, pos);
-        rotationNetwork.Value = Quaternion.Euler(0f, rot, 0f); ;
+        rotationNetwork.Value = Quaternion.Euler(0f, rot, 0f);
         positionNetwork.Value = pos.normalized * speed * Time.deltaTime;
+        UpdatePosRotClientRpc(rot, pos);
+
     }
 
     [ClientRpc]
     private void UpdatePosRotClientRpc(float rot, Vector3 pos)
     {
-        if (IsOwner) { return; }
+        //if (IsOwner) { return; }
         transform.rotation = rotationNetwork.Value;
         controller.Move(positionNetwork.Value);
     }

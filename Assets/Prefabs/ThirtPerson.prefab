@@ -992,7 +992,7 @@ MonoBehaviour:
   controller: {fileID: 4228075177110921703}
   speedRuning: 6
   speedWalkin: 3
-  turnSmoothTime: 0.2
+  turnSmoothTime: 0.1
   Cam: {fileID: 4228075176569340262}
   ownCamera: {fileID: 4228075176569340259}
   Cinemachine: {fileID: 4228075175751638775}

@@ -5,20 +5,13 @@ using UnityEngine;
 public class PlayerControl : NetworkBehaviour
 {
 
-    //public enum PlayerState
-    //{
-    //    Idle,
-    //    Walk,
-    //    ReverseWalk,
-    //    Run
-    //}
     [SerializeField] private Camera cam;
 
     [SerializeField]
     private float walkSpeed = 3.5f;
 
     [SerializeField]
-    private float runSpeedOffset = 2.0f;
+    private float runSpeed = 6.0f;
 
     [SerializeField]
     private float rotationSpeed = 3.5f;
@@ -32,22 +25,24 @@ public class PlayerControl : NetworkBehaviour
     [SerializeField]
     private NetworkVariable<Vector3> networkRotationDirection = new NetworkVariable<Vector3>();
 
-    //[SerializeField]
-    //private NetworkVariable<PlayerState> networkPlayerState = new NetworkVariable<PlayerState>();
+    [SerializeField] private NetworkVariable<int> animStateNetwork = new NetworkVariable<int>();
+
+
+    private float speed;
+    private bool isRunning;
 
     private CharacterController characterController;
 
     // client caches positions
     private Vector3 oldInputPosition = Vector3.zero;
     private Vector3 oldInputRotation = Vector3.zero;
-    //private PlayerState oldPlayerState = PlayerState.Idle;
 
+    [SerializeField]
     private Animator animator;
 
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
-        //animator = GetComponent<Animator>();
     }
 
     void Start()
@@ -58,6 +53,8 @@ public class PlayerControl : NetworkBehaviour
                    Random.Range(defaultInitialPositionOnPlane.x, defaultInitialPositionOnPlane.y));
 
             cam.enabled = true;
+            speed = walkSpeed;
+            isRunning = false;
         }
     }
 
@@ -86,15 +83,12 @@ public class PlayerControl : NetworkBehaviour
 
     private void ClientVisuals()
     {
-        //if (oldPlayerState != networkPlayerState.Value)
-        //{
-        //    oldPlayerState = networkPlayerState.Value;
-        //    animator.SetTrigger($"{networkPlayerState.Value}");
-        //}
+        animator.SetInteger("AnimState", animStateNetwork.Value);
     }
 
     private void ClientInput()
     {
+        
         // left & right rotation
         Vector3 inputRotation = new Vector3(0, Input.GetAxis("Horizontal"), 0);
 
@@ -103,32 +97,33 @@ public class PlayerControl : NetworkBehaviour
         float forwardInput = Input.GetAxis("Vertical");
         Vector3 inputPosition = direction * forwardInput;
 
-        // change animation states
-        //if (forwardInput == 0)
-        //    UpdatePlayerStateServerRpc(PlayerState.Idle);
-        //else if (!ActiveRunningActionKey() && forwardInput > 0 && forwardInput <= 1)
-        //    UpdatePlayerStateServerRpc(PlayerState.Walk);
-        //else if (ActiveRunningActionKey() && forwardInput > 0 && forwardInput <= 1)
-        //{
-        //    inputPosition = direction * runSpeedOffset;
-        //    UpdatePlayerStateServerRpc(PlayerState.Run);
-        //}
-        //else if (forwardInput < 0)
-        //    UpdatePlayerStateServerRpc(PlayerState.ReverseWalk);
+        if (Input.GetButtonDown("Run")) { isRunning = true; speed = runSpeed; }
+        else if (Input.GetButtonUp("Run")) { isRunning = false; speed = walkSpeed; }
 
-        // let server know about position and rotation client changes
-        if (oldInputPosition != inputPosition ||
-            oldInputRotation != inputRotation)
+
+        UpdateClientPositionAndRotationServerRpc(inputPosition * speed, inputRotation * rotationSpeed);
+
+
+        if (forwardInput > 0 && !isRunning)
         {
-            oldInputPosition = inputPosition;
-            UpdateClientPositionAndRotationServerRpc(inputPosition * walkSpeed, inputRotation * rotationSpeed);
+            UpdatePlayerStateServerRpc(1);
         }
+        else if (forwardInput > 0 && isRunning)
+        {
+            UpdatePlayerStateServerRpc(2);
+        }
+        else if (forwardInput<0)
+        {
+            UpdatePlayerStateServerRpc(-1);
+        }
+        else
+        {
+            UpdatePlayerStateServerRpc(0);
+        }
+
     }
 
-    private static bool ActiveRunningActionKey()
-    {
-        return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-    }
+
 
     [ServerRpc]
     public void UpdateClientPositionAndRotationServerRpc(Vector3 newPosition, Vector3 newRotation)
@@ -137,9 +132,9 @@ public class PlayerControl : NetworkBehaviour
         networkRotationDirection.Value = newRotation;
     }
 
-    //[ServerRpc]
-    //public void UpdatePlayerStateServerRpc(PlayerState state)
-    //{
-    //    networkPlayerState.Value = state;
-    //}
+    [ServerRpc]
+    public void UpdatePlayerStateServerRpc(int state)
+    {
+        animStateNetwork.Value = state;
+    }
 }
