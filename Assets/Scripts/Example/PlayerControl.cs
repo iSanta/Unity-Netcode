@@ -73,11 +73,11 @@ public class PlayerControl : NetworkBehaviour
     {
         if (networkPositionDirection.Value != Vector3.zero)
         {
-            characterController.SimpleMove(networkPositionDirection.Value);
+            characterController.SimpleMove(networkPositionDirection.Value * Time.deltaTime);
         }
         if (networkRotationDirection.Value != Vector3.zero)
         {
-            transform.Rotate(networkRotationDirection.Value, Space.World);
+            transform.Rotate(networkRotationDirection.Value * Time.deltaTime, Space.World);
         }
     }
 
