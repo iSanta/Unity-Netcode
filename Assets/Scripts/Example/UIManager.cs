@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -9,6 +10,18 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject spawnerController;
 
     private bool hasServerStarted;
+
+    private void Awake()
+    {
+        string[] args = System.Environment.GetCommandLineArgs();
+        for (int i = 0; i < args.Length; i++)
+        {
+            if (args[i] == "-launch-as-client") { StartClient(); }
+            else if (args[i] == "-launch-as-server") { StartServer(); }
+            else if (args[i] == "-launch-as-host") { StartHost(); }
+        }
+    }
+
     public void StartHost()
     {
         if (NetworkManager.Singleton.StartHost())
@@ -34,6 +47,20 @@ public class UIManager : MonoBehaviour
         else
         {
             Debug.Log("Error al conectar Cliente");
+        }
+    }
+
+    public void StartServer()
+    {
+        if (NetworkManager.Singleton.StartServer())
+        {
+            Debug.Log("Servidor Conectad");
+            logginMenu.SetActive(false);
+            Cursor.visible = true;
+        }
+        else
+        {
+            Debug.Log("Error al conectar Servidor");
         }
     }
 
